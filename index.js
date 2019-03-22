@@ -3,7 +3,8 @@
  */
 
 import {AppRegistry} from 'react-native';
-import TabNavigtion from './component/TabNavigation'
+import App from './App';
 import {name as appName} from './app.json';
+import Index from './component/Index'
 
-AppRegistry.registerComponent(appName, () => TabNavigtion);
+AppRegistry.registerComponent(appName, () => App);

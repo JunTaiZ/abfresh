@@ -8,7 +8,10 @@
   },
   "dependencies": {
     "react": "16.8.3",
-    "react-native": "0.59.0"
+    "react-native": "0.59.0",
+    "react-native-gesture-handler": "^1.1.0",
+    "react-native-tab-navigator": "^0.3.4",
+    "react-navigation": "^3.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
@@ -20,5 +23,16 @@
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://git.dev.tencent.com/zjtzjt/abfresh.git"
+  },
+  "keywords": [
+    "134210zjt"
+  ],
+  "author": "zjt",
+  "license": "ISC",
+  "description": ""
 }
