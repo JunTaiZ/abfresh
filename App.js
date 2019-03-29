@@ -6,6 +6,7 @@ import Cart from "./component/Cart";
 import Mine from "./component/Mine";
 import Search from "./component/second/Search";
 import Header from './component/Header'
+import Detail from './component/second/Detail'
 
 import {
   StyleSheet,
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     color: "rgb(200, 200, 200)"
   },
   icon: {
-    width: 30,
+    width: 25,
     height: 25
   },
   navigator: {
@@ -38,7 +39,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'column',
 		justifyContent: 'flex-start'
-	},
+  },
+  tabBar: {
+    backgroundColor: 'white',
+    borderWidth: 0,
+    elevation: 0,
+  },
 });
 let title = "Home";
 type Props = {};
@@ -63,30 +69,33 @@ class App extends Component<Props> {
     super(props);
     this.state = {
       selectedTab: "Home",
-      title: "Home"
+      title: "Home",
+      classify: 'fruit',
     };
   }
   static navigationOptions = ({ navigation, state }) => {
     return {
       headerTitle: <Header navigation={navigation} />,
       headerStyle: {
-        backgroundColor: "rgb(237, 56, 16)",
-				height: 35,
+				height: 30,
+        backgroundColor: 'white',
 				display: navigation.getParam('title') === 'Home' || 
 				  navigation.getParam('title') === 'Classify' ?
 					'flex' : 'none',
 				elevation: 0,
-				shadowColor: 'black',	
 			},
-			headerTintColor: "white",
     }
   };
   render() {
     let { navigation } = this.props;
     return (
       <View style={styles.navigator}>
-        <StatusBar backgroundColor={"rgb(237, 56, 16)"} />
-        <TabNavigtor>
+        <StatusBar backgroundColor={"white"} 
+          barStyle={'dark-content'}
+        />
+        <TabNavigtor
+          tabBarStyle={styles.tabBar}
+        >
           <TabNavigtor.Item
             selected={this.state.selectedTab === 'Home'}
             title="首页"
@@ -115,7 +124,7 @@ class App extends Component<Props> {
               return navigation.setParams({ title: "Home" });
             }}
           >
-            <Index />
+            <Index this={this} navigation={navigation} />
           </TabNavigtor.Item>
           <TabNavigtor.Item
             selected={this.state.selectedTab === "Classify"}
@@ -145,7 +154,7 @@ class App extends Component<Props> {
               return navigation.setParams({ title: "Classify" });
             }}
           >
-            <Classify />
+            <Classify appThis={this} navigation={navigation} />
           </TabNavigtor.Item>
           <TabNavigtor.Item
             selected={this.state.selectedTab === "Cart"}
@@ -221,10 +230,21 @@ const AppNavigator = createStackNavigator({
     },
     Search: {
       screen: Search
-    }
-  }, {
+    },
+    Detail: {
+      screen: Detail
+    },
+	}, {
 		mode: 'card',
-    initialRouteName: "Home",
+		initialRouteName: "Home",
+		defaultNavigationOptions: {
+			headerStyle: {
+        backgroundColor: "white",
+				height: 30,
+				elevation: 0,
+				fontSize: 18,
+			},
+		}
 	}
 );
 const AppContainer = createAppContainer(AppNavigator);

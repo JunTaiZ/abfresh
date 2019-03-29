@@ -8,7 +8,7 @@ export default class Search extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('otherParam', 'A Nested Details Screen'),
-			gesturesEnabled: true,
+      gesturesEnabled: true,
     };
   };
   render() {

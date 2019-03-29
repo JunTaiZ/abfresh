@@ -39,21 +39,20 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
 	headerImage: {
-		height: 30,
-		width: 30,
+		height: 28,
+		width: 28,
 	},
 	headerTitle: {
-		flex: 1,
 		flexDirection: 'row',
-		backgroundColor: 'rgb(237, 54, 16)',
+		backgroundColor: 'white',
     color: 'white',
     alignItems: 'center',
     justifyContent: 'space-around',
 	},
 	headerText: {
-    color: 'white',
+    color: 'rgb(237, 54, 16)',
     marginLeft: 15,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   changeAddress: {

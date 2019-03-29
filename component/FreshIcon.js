@@ -4,6 +4,7 @@ import {
   Image,
   Text,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native'
 
 export default class FreshIcon extends Component {
@@ -12,25 +13,38 @@ export default class FreshIcon extends Component {
   }
   render() {
     return(
-      <View key={this.props.id} style={styles.container}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.container}
+        onPress={() => {
+          this.props.this.setState({
+            selectedTab: 'Classify',
+            classify: this.props.id,
+          })
+        }}
+      >
         <Image style={styles.image} source={{uri:this.props.url}} />
         <Text style={styles.name}>{this.props.name}</Text>
-      </View>
+      </TouchableOpacity>
     )
   }
 }
 
 const styles = StyleSheet.create({
   image: {
-    height: 60,
-    width: 60,
+    height: 50,
+    width: 50,
     borderRadius: 10,
   },
   container: {
+    height: 50,
+    width: 60,
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   name: {
-    fontSize: 14,
-    color: 'gray',
+    fontSize: 13,
+    color: '#aaa',
     textAlign: 'center',
   },
 })
