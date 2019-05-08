@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
+import {IP as ip} from './serverConfig.json'
 export default class ItemOfFresh extends Component {
   constructor(props) {
     super(props)
@@ -18,8 +19,10 @@ export default class ItemOfFresh extends Component {
       <View style={[styles.cont, {opacity: cost === 0 ? 0 : 1}]} >
         <TouchableHighlight
           underlayColor='white'
-          activeOpacity={0.5}
-          onPress={() => navigation.push('Detail')}
+          activeOpacity={0.9}
+          onPress={() => navigation.push('Detail', {
+            title: '商品详情'
+          })}
           ref={'parent'}
           extra
           style={{display: cost === 0 ? 'none' : 'flex'}}
@@ -30,7 +33,7 @@ export default class ItemOfFresh extends Component {
                 style={styles.container}>
                 <Image 
                   style={styles.picture}
-                  source={{uri: url}}
+                  source={{uri: `${ip}${url}`}}
                 />
                 <Text style={styles.name}>{ name }</Text>
                 <Text style={styles.selled}>已售：{ selled }</Text>

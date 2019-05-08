@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ClassifyItem from './ClassifyItem'
+import Pull from './Pull'
 
 import { IP } from './serverConfig.json'
 import {
@@ -8,127 +9,81 @@ import {
 	ScrollView,
 	FlatList,
 	View,
+	ActivityIndicator,
+	Dimensions,
 	StatusBar,
 	TouchableOpacity,
 } from 'react-native';
+import {PullView} from 'react-native-pull'
 let ip = IP
+
+let height = Dimensions.get('screen').height - 107
+let width = Dimensions.get('screen').width
 export default class Index extends Component {
 	constructor(props) {
 		super(props)
+		this.state = {refreshing: false};
+		this.onPullRelease = this.onPullRelease.bind(this);
+		this.renderList = this.renderList.bind(this)
 		this.getData = this.getData.bind(this)
 		this.getClassify = this.getClassify.bind(this)
 	}
+	componentDidMount() {
+		this.getData()
+	}
+	topIndicatorRender(pulling, pullok, pullrelease) {
+		const hide = {position: 'absolute', left: 10000};
+		const show = {position: 'relative', left: 0};
+		setTimeout(() => {
+				if (pulling) {
+						this.txtPulling && this.txtPulling.setNativeProps({style: show});
+						this.txtPullok && this.txtPullok.setNativeProps({style: hide});
+						this.txtPullrelease && this.txtPullrelease.setNativeProps({style: hide});
+				} else if (pullok) {
+						this.txtPulling && this.txtPulling.setNativeProps({style: hide});
+						this.txtPullok && this.txtPullok.setNativeProps({style: show});
+						this.txtPullrelease && this.txtPullrelease.setNativeProps({style: hide});
+				} else if (pullrelease) {
+						this.txtPulling && this.txtPulling.setNativeProps({style: hide});
+						this.txtPullok && this.txtPullok.setNativeProps({style: hide});
+						this.txtPullrelease && this.txtPullrelease.setNativeProps({style: show});
+				}
+		}, 1);
+		return (
+			<View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 60}}>
+				<ActivityIndicator size="small" color="gray" />
+				<Text ref={(c) => {this.txtPulling = c;}}> 下拉刷新</Text>
+				<Text ref={(c) => {this.txtPullok = c;}}> 松开刷新</Text>
+				<Text ref={(c) => {this.txtPullrelease = c;}}> 玩命刷新中</Text>
+	    </View>
+    );
+	}
+	onPullRelease(resolve) {
+		fetch(`${ip}/search?cost=0`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => response.json()).then((responseJson) => {
+      this.props.appThis.setState({
+				classifyItems: responseJson
+			})
+			resolve()
+		})
+  }
 	getData() {
-		let hotSell = [{
-			classify: 'fruit',
-			url: `${ip}/images/apple.jpg`,
-			name: '苹果200g',
-			vip: false,
-			limitTime: true,
-			cost: 15.00,
-			cheap: 14.30,
-			selled: 2000,
-		}, {
-			classify: 'fruit',
-			url: `${ip}/images/banana.jpg`,
-			name: '香蕉200g',
-			vip: false,
-			limitTime: true,
-			cost: 12.00,
-			cheap: 9.00,
-			selled: 502,
-		}, {
-			classify: 'seafood',
-			url: `${ip}/images/yaoxie.jpg`,
-			name: '药蟹500g',
-			vip: false,
-			limitTime: false,
-			cost: 35.00,
-			cheap: 35.00,
-			selled: 116,
-		}, {
-			classify: 'meat',
-			url: `${ip}/images/zhurou2.jpg`,
-			name: '猪肉300g',
-			vip: true,
-			limitTime: false,
-			cost: 23.00,
-			cheap: 22.00,
-			selled: 231,
-		}, {
-			classify: 'vege',
-			url: `${ip}/images/tomato.jpg`,
-			name: '番茄200g',
-			vip: false,
-			limitTime: true,
-			cost: 15.00,
-			cheap: 13.00,
-			selled: 601,
-		}, {
-			classify: 'fish',
-			url: `${ip}/images/qiudaoyu.jpg`,
-			name: '秋刀鱼300g',
-			vip: false,
-			limitTime: false,
-			cost: 25.00,
-			cheap: 25.00,
-			selled: 200,
-		}, {
-			classify: 'seafood',
-			url: `${ip}/images/balangyu.jpg`,
-			name: '巴浪鱼250g',
-			vip: false,
-			limitTime: true,
-			cost: 15.00,
-			cheap: 14.30,
-			selled: 2020,
-		}, {
-			classify: 'seefood',
-			url: `${ip}/images/zhangyu.jpg`,
-			name: '章鱼250g',
-			vip: true,
-			limitTime: false,
-			cost: 19.00,
-			cheap: 15.00,
-			selled: 522,
-		}, {
-			classify: 'seefood',
-			url: `${ip}/images/yaoxie.jpg`,
-			name: '药蟹500g',
-			vip: false,
-			limitTime: false,
-			cost: 35.00,
-			cheap: 35.00,
-			selled: 116,
-		}, {
-			classify: 'meat',
-			url: `${ip}/images/zhurou2.jpg`,
-			name: '猪肉300g',
-			vip: true,
-			limitTime: false,
-			cost: 23.00,
-			cheap: 22.00,
-			selled: 231,
-		}, {
-			classify: 'vege',
-			url: `${ip}/images/tomato.jpg`,
-			name: '番茄200g',
-			vip: false,
-			limitTime: true,
-			cost: 15.00,
-			cheap: 13.00,
-			selled: 601,
-		}, {
-			classify: 'fish',
-			url: `${ip}/images/qiudaoyu.jpg`,
-			name: '秋刀鱼300g',
-			vip: false,
-			limitTime: false,
-			cost: 25.00,
-			cheap: 25.00,
-			selled: 200,
-		}, ]
-		return hotSell
+		fetch(`${ip}/search?cost=0`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => response.json()).then((responseJson) => {
+      this.props.appThis.setState({
+				classifyItems: responseJson
+			})
+    })
 	}
 	getClassify() {
 		let classify = [{
@@ -145,42 +100,17 @@ export default class Index extends Component {
 			classifyName: '海鲜'
 		}, {
 			classify: 'fish',
-			classifyName: '河鱼'
+			classifyName: '淡水鱼'
 		}, ]
 		return classify
 	}
-
-	render() {
-		let { appThis, navigation } = this.props
-		return (
-			<View style={styles.container}>
-				<ScrollView style={styles.tabs}>
-					{
-						this.getClassify().map((item) => {
-							return <TouchableOpacity
-								onPress={() => appThis.setState({
-									classify: item.classify,
-								})}
-								activeOpacity={0.8}
-								style={[
-									styles.tab,
-									item.classify === appThis.state.classify ? 
-									  styles.currentTab : styles.unactive
-								]}
-								key={item.classify+'_'}
-							>
-								<Text
-								style={
-									item.classify === appThis.state.classify ? 
-									  styles.activeText : styles.unactiveText
-								}>{item.classifyName}</Text>
-							</TouchableOpacity>
-						})
-					}
-				</ScrollView>
+	renderList() {
+		let {appThis, navigation} = this.props
+		return(
+			<View style={styles.containerList}>
 				<FlatList
-				  sytle={styles.list}
-					data={this.getData().filter((item) => {
+					style={styles.list}
+					data={appThis.state.classifyItems.filter((item) => {
 						return item.classify === appThis.state.classify
 					})}
 					renderItem={({item}) => (
@@ -192,24 +122,70 @@ export default class Index extends Component {
 					keyExtractor={(item, index) => item.url+index}
 				>
 				</FlatList>
-      </View>
+			</View>
+		)
+	}
+	render() {
+		let { appThis, navigation } = this.props
+		let filterItems = appThis.state.classifyItems.filter((item) => {
+			return item.classify === appThis.state.classify
+		})
+		return (
+		<View style={styles.container}>
+			<View>
+				<ScrollView style={styles.tabs}>
+					{
+						this.getClassify().map((item) => {
+							return <TouchableOpacity
+								onPress={() => appThis.setState({
+									classify: item.classify,
+								})}
+								activeOpacity={0.8}
+								style={[
+									styles.tab,
+									item.classify === appThis.state.classify ? 
+										styles.currentTab : styles.unactive
+								]}
+								key={item.classify+'_'}
+							>
+								<Text
+								style={
+									item.classify === appThis.state.classify ? 
+										styles.activeText : styles.unactiveText
+								}>{item.classifyName}</Text>
+							</TouchableOpacity>
+						})
+					}
+				</ScrollView>
+			</View>
+		  <Pull
+			  height={filterItems.length * 120}
+				onPullRelease={this.onPullRelease}
+				renderData={this.renderList}
+			/>
+    </View>
 		)
 	}
 }
 
 const styles = StyleSheet.create({
+	pullView: {
+		height,
+		width,
+	},
 	container: {
-		paddingLeft: 85,
-		// flex: 1,
-		// flexDirection: 'row',
+		flex: 1,
+		flexDirection: 'row',
+	},
+	containerList: {
 	},
 	list: {
 		width: '100%',
 	},
 	tabs: {
-		position: 'absolute',
+		flex: 1,
 		width: 85,
-		backgroundColor: '#f8f8f8'
+		backgroundColor: '#f8f8f8',
 	},
 	tab: {
 		paddingLeft: 10,

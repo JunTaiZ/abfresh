@@ -3,6 +3,7 @@ import FreshIcons from './FreshIcon'
 import IndexList from './IndexList'
 import Cut from './Cut'
 import { IP } from './serverConfig.json'
+import Pull from './Pull'
 
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 // import Search from './second/Search'
@@ -25,7 +26,7 @@ import {
 } from 'react-native';
 const freshIcons = [{
   url: `${ip}/images/fruit.jpg`,
-  name: '新鲜水果',
+  name: '水果',
   id: 'fruit',
 }, {
   url: `${ip}/images/tomato2.png`,
@@ -41,115 +42,6 @@ const freshIcons = [{
   id: 'meat',
 },]
 
-let hotSell = [{
-  classify: 'fruit',
-  url: `${ip}/images/apple.jpg`,
-  name: '苹果200g',
-  vip: false,
-  limitTime: true,
-  cost: 15.00,
-  cheap: 14.30,
-  selled: 2000,
-}, {
-  classify: 'fruit',
-  url: `${ip}/images/banana.jpg`,
-  name: '香蕉200g',
-  vip: false,
-  limitTime: true,
-  cost: 12.00,
-  cheap: 9.00,
-  selled: 502,
-}, {
-  classify: 'seafood',
-  url: `${ip}/images/yaoxie.jpg`,
-  name: '药蟹500g',
-  vip: false,
-  limitTime: false,
-  cost: 35.00,
-  cheap: 35.00,
-  selled: 116,
-}, {
-  classify: 'meat',
-  url: `${ip}/images/zhurou2.jpg`,
-  name: '猪肉300g',
-  vip: true,
-  limitTime: false,
-  cost: 23.00,
-  cheap: 22.00,
-  selled: 231,
-}, {
-  classify: 'vege',
-  url: `${ip}/images/tomato.jpg`,
-  name: '番茄200g',
-  vip: false,
-  limitTime: true,
-  cost: 15.00,
-  cheap: 13.00,
-  selled: 601,
-}, {
-  classify: 'fish',
-  url: `${ip}/images/qiudaoyu.jpg`,
-  name: '秋刀鱼300g',
-  vip: false,
-  limitTime: false,
-  cost: 25.00,
-  cheap: 25.00,
-  selled: 200,
-}, {
-  classify: 'seafood',
-  url: `${ip}/images/balangyu.jpg`,
-  name: '巴浪鱼250g',
-  vip: false,
-  limitTime: true,
-  cost: 15.00,
-  cheap: 14.30,
-  selled: 2020,
-}, {
-  classify: 'seefood',
-  url: `${ip}/images/zhangyu.jpg`,
-  name: '章鱼250g',
-  vip: true,
-  limitTime: false,
-  cost: 19.00,
-  cheap: 15.00,
-  selled: 522,
-}, {
-  classify: 'seefood',
-  url: `${ip}/images/yaoxie.jpg`,
-  name: '药蟹500g',
-  vip: false,
-  limitTime: false,
-  cost: 35.00,
-  cheap: 35.00,
-  selled: 116,
-}, {
-  classify: 'meat',
-  url: `${ip}/images/zhurou2.jpg`,
-  name: '猪肉300g',
-  vip: true,
-  limitTime: false,
-  cost: 23.00,
-  cheap: 22.00,
-  selled: 231,
-}, {
-  classify: 'vege',
-  url: `${ip}/images/tomato.jpg`,
-  name: '番茄200g',
-  vip: false,
-  limitTime: true,
-  cost: 15.00,
-  cheap: 13.00,
-  selled: 601,
-}, {
-  classify: 'fish',
-  url: `${ip}/images/qiudaoyu.jpg`,
-  name: '秋刀鱼300g',
-  vip: false,
-  limitTime: false,
-  cost: 25.00,
-  cheap: 25.00,
-  selled: 200,
-}, ]
 item = {
   classify: '',
   url: ``,
@@ -170,9 +62,37 @@ export default class Home extends Component {
     this.getVip = this.getVip.bind(this)
     this.getEven = this.getEven.bind(this)
     this.getLimitTime = this.getLimitTime.bind(this)
+    this.renderVip = this.renderVip.bind(this)
+    this.renderHotSell = this.renderHotSell.bind(this)
+    this.renderLimitTime = this.renderLimitTime.bind(this)
+    this.state = {
+      limitTime: [{}],
+      vip: [{}],
+      hotSell: [{}],
+    }
   }
-  getHotsell() {
-    return this.getEven(hotSell)
+  componentDidMount() {
+    this.getHotsell()
+    this.getVip()
+    this.getLimitTime()
+  }
+  getHotsell(e) {
+    fetch(`${ip}/search?selled=500`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => response.json()).then((responseJson) => {
+      let hotSell = responseJson
+      this.props.appThis.setState({
+        hotSell: this.getEven(hotSell)
+      })
+      e()
+		}).catch((err) => {
+      alert('网络错误')
+      console.log(err)
+    })
   }
   getEven(array) {
     if (array.length % 2 === 1) {
@@ -181,20 +101,88 @@ export default class Home extends Component {
     return array
   }
   getVip(e) {
-    let hotSell = this.getHotsell()
-    let vip = hotSell.filter((item) => {
-      return item.vip
+    fetch(`${ip}/search?vip=1`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => response.json()).then((responseJson) => {
+      let vip = responseJson
+      this.props.appThis.setState({
+        vip: this.getEven(vip)
+      })
+      e()
+		}).catch((err) => {
+      alert('网络错误')
+      console.log(err)
     })
-    return this.getEven(vip)
   }
-  getLimitTime() {
-    let hotSell = this.getHotsell()
-    let limitTime = hotSell.filter((item) => {
-      return item.limitTime
+  getLimitTime(e) {
+    fetch(`${ip}/search?limittime=1`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => response.json()).then((responseJson) => {
+      let limitTime = responseJson
+      this.props.appThis.setState({
+        limitTime: this.getEven(limitTime)
+      })
+      e()
+		}).catch((err) => {
+      alert('网络错误')
+      console.log(err)
     })
-    return this.getEven(limitTime)
+  }
+  renderVip() {
+    return(
+      <View>
+        <IndexList 
+          navigation={this.props.navigation}
+          hotSell={this.props.appThis.state.vip}
+        />
+        <Cut text={'已触碰到我的底线～'} height={45} />
+      </View>
+    )
+  }
+  renderLimitTime() {
+    return(
+      <View>
+        <IndexList 
+          navigation={this.props.navigation}
+          hotSell={this.props.appThis.state.limitTime}
+        />
+        <Cut text={'已触碰到我的底线～'} height={45} />
+      </View>
+    )
+  }
+  renderHotSell() {
+    return(
+      <View>
+        <View style={styles.icons}>
+          {freshIcons.map((image) => {
+            return(
+              <FreshIcons
+                key={image.url}
+                id={image.id}
+                this={this.props.appThis}
+                url={image.url} name={image.name} 
+              />
+            )
+          })}
+        </View>
+        <IndexList 
+          navigation={this.props.navigation}
+          hotSell={this.props.appThis.state.hotSell}
+        />
+        <Cut text={'已触碰到我的底线～'} height={45} />
+      </View>
+    )
   }
   render() {
+    let {appThis} = this.props
     return (
       <View style={styles.index}>
         <ScrollableTabView
@@ -207,37 +195,25 @@ export default class Home extends Component {
           tabBarTextStyle={styles.textStyle}
         >
           <ScrollView style={styles.container} tabLabel="热卖">
-            <View style={styles.icons}>
-              {freshIcons.map((image) => {
-                return(
-                  <FreshIcons
-                    key={image.url}
-                    id={image.id}
-                    this={this.props.this}
-                    url={image.url} name={image.name} 
-                  />
-                )
-              })}
-            </View>
-            <IndexList 
-              navigation={this.props.navigation}
-              hotSell={this.getHotsell()}
+            <Pull
+              renderData={this.renderHotSell}
+              onPullRelease={this.getHotsell}
+              height={appThis.state.hotSell.length * 150}
             />
-            <Cut text={'已触碰到我的底线～'} height={45} />
           </ScrollView>
           <ScrollView style={styles.container} tabLabel="会员特价">
-            <IndexList 
-              navigation={this.props.navigation}
-              hotSell={this.getVip()}
+            <Pull 
+              height={appThis.state.vip.length * 150}
+              renderData={this.renderVip}
+              onPullRelease={this.getVip}
             />
-            <Cut text={'已触碰到我的底线～'} height={45} />
           </ScrollView>
           <ScrollView style={styles.container} tabLabel="限时抢购">
-            <IndexList 
-              navigation={this.props.navigation}
-              hotSell={this.getLimitTime()}
+            <Pull
+              height={appThis.state.limitTime.length * 150}
+              renderData={this.renderLimitTime}
+              onPullRelease={this.getLimitTime}
             />
-            <Cut text={'已触碰到我的底线～'} height={45} />
           </ScrollView>
         </ScrollableTabView>
       </View>

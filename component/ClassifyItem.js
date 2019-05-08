@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
+import { IP } from './serverConfig.json'
 import {
   View,
   Image,
   Text,
   StyleSheet,
 } from 'react-native'
+const ip = IP
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
 export default class ItemOfFresh extends Component {
@@ -31,7 +33,7 @@ export default class ItemOfFresh extends Component {
                   style={styles.container}>
                   <Image 
                     style={styles.picture}
-                    source={{uri: url}}
+                    source={{uri: `${ip}${url}`}}
                   />
                 </View>
               ) : <Text></Text>
@@ -68,7 +70,7 @@ export default class ItemOfFresh extends Component {
 const styles = StyleSheet.create({
   cont: {
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f3f3',
+    borderBottomColor: '#f7f7f7',
     marginBottom: 6,
     marginTop: 6,
     marginLeft: 12,
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textView: {
+    width: 120,
     marginLeft: 10,
   },
   container: {

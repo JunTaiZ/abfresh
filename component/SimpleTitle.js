@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Title from './SimpleTitle'
 
 
 import {
@@ -14,15 +13,7 @@ export default class Index extends Component {
   render() {
     return(
       <View style={styles.container}>
-        <Title
-          name={'购物车'}
-        />
-        <ScrollView>
-          <Text>hi</Text>
-        </ScrollView>
-        <View style={styles.bottom}>
-          <Text>bottom</Text>
-        </View>
+        <Text style={styles.text}>{this.props.name}</Text>
       </View>
     )
   }
@@ -30,9 +21,6 @@ export default class Index extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  titleHeader: {
     height: 25,
     paddingLeft: 15,
     paddingTop: 4,
@@ -42,11 +30,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
     fontWeight: '600',
-
-  },
-  scrollView: {
-    flex: 1
-  },
-  bottom: {
   }
 })
