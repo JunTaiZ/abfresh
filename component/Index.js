@@ -4,15 +4,12 @@ import IndexList from './IndexList'
 import Cut from './Cut'
 import { IP } from './serverConfig.json'
 import Pull from './Pull'
+import Activity from './Activity'
 
-import { createStackNavigator, createAppContainer } from 'react-navigation'
 // import Search from './second/Search'
 import ScrollableTabView, {
   DefaultTabBar, ScrollableTabBar 
 } from 'react-native-scrollable-tab-view'
-
-
-let array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 let ip = IP
 import {
@@ -69,28 +66,34 @@ export default class Home extends Component {
       limitTime: [{}],
       vip: [{}],
       hotSell: [{}],
+      activity: false
     }
-  }
-  componentDidMount() {
+
     this.getHotsell()
     this.getVip()
     this.getLimitTime()
+  }
+  componentDidMount() {
+    
   }
   getHotsell(e) {
     fetch(`${ip}/search?selled=500`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Content-Type": 'application/json',
       },
     }).then((response) => response.json()).then((responseJson) => {
       let hotSell = responseJson
       this.props.appThis.setState({
         hotSell: this.getEven(hotSell)
       })
-      e()
+      console.log(hotSell)
+      if (this.state.activity) {
+        e()
+      }
 		}).catch((err) => {
-      alert('网络错误')
+      alert('hot网络错误')
       console.log(err)
     })
   }
@@ -112,7 +115,9 @@ export default class Home extends Component {
       this.props.appThis.setState({
         vip: this.getEven(vip)
       })
-      e()
+      if (this.state.activity) {
+        e()
+      }
 		}).catch((err) => {
       alert('网络错误')
       console.log(err)
@@ -130,13 +135,22 @@ export default class Home extends Component {
       this.props.appThis.setState({
         limitTime: this.getEven(limitTime)
       })
-      e()
+      if (this.state.activity) {
+        e()
+      } else {
+        setTimeout(() => {
+          this.setState({
+            activity: true
+          })
+        }, 10);
+      }
 		}).catch((err) => {
-      alert('网络错误')
+      alert('lim网络错误')
       console.log(err)
     })
   }
   renderVip() {
+    if (this.state.activity)
     return(
       <View>
         <IndexList 
@@ -148,6 +162,7 @@ export default class Home extends Component {
     )
   }
   renderLimitTime() {
+    if (this.state.activity)
     return(
       <View>
         <IndexList 
@@ -173,10 +188,13 @@ export default class Home extends Component {
             )
           })}
         </View>
-        <IndexList 
+        {
+          this.state.activity ? <IndexList 
           navigation={this.props.navigation}
           hotSell={this.props.appThis.state.hotSell}
-        />
+          /> : <View></View>
+        }
+        
         <Cut text={'已触碰到我的底线～'} height={45} />
       </View>
     )
@@ -185,6 +203,7 @@ export default class Home extends Component {
     let {appThis} = this.props
     return (
       <View style={styles.index}>
+        <Activity activity={this.state.activity} />
         <ScrollableTabView
           style={styles.scrollTabView}
           renderTabBar={ () => <ScrollableTabBar /> }

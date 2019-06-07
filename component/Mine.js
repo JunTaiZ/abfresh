@@ -7,6 +7,7 @@ import {
   AsyncStorage,
   StyleSheet,
   Text,
+  Alert,
   View,
   TouchableOpacity,
   Image,
@@ -166,14 +167,19 @@ export default class Index extends Component {
   constructor(props) {
     super(props)
     this.onScroll = this.onScroll.bind(this)
-
     AsyncStorage.getItem('user').then((res) => {
       let resJson = JSON.parse(res)
       if (resJson.name === undefined) {
         resJson.name = '登录'
+        resJson.telephone = ''
       }
       this.props.appThis.setState({
         user: resJson
+      })
+    }).catch((err) => {
+      alert('err');
+      this.props.appThis.setState({
+        user: {name: '登录', telephone: ''}
       })
     })
   }
@@ -202,7 +208,7 @@ export default class Index extends Component {
   }
   render() {
     let { appThis } = this.props
-    
+    let {name, telephone} = appThis.state.user
     return (
       <View style={styles.all}>
         <View style={[styles.header, {
@@ -237,9 +243,21 @@ export default class Index extends Component {
               style={styles.mineInfo}
               onPress={() => {
                 if (appThis.state.user.name !== '登录') {
+                  Alert.alert('注销', '是否注销', [{
+                    text: '取消', onPress: () => {
 
+                    }
+                  }, {
+                    text: '确定', onPress: () => {
+                      this.props.appThis.setState({
+                        user: {name: '登录'}
+                      })
+                    }
+                  }])
                 } else {
-                  appThis.props.navigation.push('Login')
+                  appThis.props.navigation.push('Login', {
+                    appThis: appThis
+                  })
                 }
               }}
             >
@@ -247,25 +265,40 @@ export default class Index extends Component {
                 style={{width: 60, height: 60}}
                 source={{uri: appThis.state.headImg}}
               />
-              <Text style={styles.mineName}>{appThis.state.user.name}</Text>
+              <Text style={styles.mineName}>{name}</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.ordericons} shadowColor={'#eee'}
-            shadowOffset={{width: 2, height: 2}}
-          >
-            {
-              orderIcons.map((item) => {
-                return (
-                  <OrderIcon
-                    key={item.id}
-                    url={item.url}
-                    name={item.name}
-                    id={item.id}
-                  />
-                )
-              })
-            }
+          <View style={styles.orderContainer}>
+            <View style={styles.allOrder}>
+              <Text style={styles.myOrder}>我的订单</Text>
+              <TouchableOpacity 
+                onPress={() => {
+                  appThis.props.navigation.push('Order', {
+                    title: '订单'
+                  })
+                }}
+              >
+              <Text>全部订单 ></Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.ordericons} shadowColor={'#eee'}
+              shadowOffset={{width: 2, height: 2}}
+            >
+              {
+                orderIcons.map((item) => {
+                  return (
+                    <OrderIcon
+                      key={item.id}
+                      url={item.url}
+                      name={item.name}
+                      id={item.id}
+                    />
+                  )
+                })
+              }
+            </View>
           </View>
+          <Text style={styles.ad}>为你推荐</Text>
           <IndexList
             navigation={appThis.props.navigation}
             hotSell={appThis.state.hotSell}
@@ -278,8 +311,20 @@ export default class Index extends Component {
 }
 
 const styles = StyleSheet.create({
+  ad: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: 'gray',
+    marginTop: 3,
+  },
   all: {
     flex: 1,
+  },
+  allOrder: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
@@ -314,25 +359,34 @@ const styles = StyleSheet.create({
     zIndex: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: 'white',
   },
   mine: {
-    fontSize: 19,
+    fontSize: 18,
     color: '#333',
     fontWeight: '600',
   },
-  ordericons: {
+  myOrder: {
+    color: 'black',
+    fontSize: 18,
+    margin: 5,
+  },
+  orderContainer: {
     marginTop: 8,
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     backgroundColor: 'white',
     borderRadius: 5,
-    padding: 5,
+    padding: 10,
     paddingTop: 7,
     marginRight: 8,
     marginLeft: 8,
     marginBottom: 8,
+  },
+  ordericons: {
+    marginTop: 18,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   login: {
     width: 22,

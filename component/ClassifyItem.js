@@ -21,9 +21,10 @@ export default class ItemOfFresh extends Component {
         <TouchableHighlight
           underlayColor='white'
           activeOpacity={0.5}
-          onPress={() => navigation.push('Detail')}
+          onPress={() => navigation.push('Detail', {
+            title: '商品详情'
+          })}
           ref={'parent'}
-          extra
           style={{display: cost === 0 ? 'none' : 'flex'}}
         >
           <View style={styles.touchable}>

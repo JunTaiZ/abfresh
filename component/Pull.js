@@ -55,7 +55,7 @@ export default class Index extends Component {
 			  topIndicatorRender={this.topIndicatorRender}
 				topIndicatorHeight={60}
 			>
-        {renderData()}
+				{renderData()}
 		  </PullView>
 		)
 	}

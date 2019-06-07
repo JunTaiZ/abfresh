@@ -83,7 +83,9 @@ export default class Index extends Component {
       this.props.appThis.setState({
 				classifyItems: responseJson
 			})
-    })
+    }).catch((err) => {
+			alert('classify err')
+		})
 	}
 	getClassify() {
 		let classify = [{

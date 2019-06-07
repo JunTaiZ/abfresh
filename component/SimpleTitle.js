@@ -21,10 +21,15 @@ export default class Index extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: 25,
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: 30,
     paddingLeft: 15,
     paddingTop: 4,
-    paddingBottom: 3,
+    paddingBottom: 8,
+    marginBottom: 5,
   },
   text: {
     fontSize: 18,
